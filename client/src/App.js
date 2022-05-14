@@ -1,10 +1,15 @@
-
+import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
+import theme from "./theme";
+import ToggleColourMode from "./components/ToggleColourMode";
 
 function App() {
   return (
+    <ChakraProvider theme={theme}>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
     <div className="App">
-      <h1> Yooo </h1>
+      <ToggleColourMode></ToggleColourMode>
     </div>
+    </ChakraProvider>
   );
 }
 
