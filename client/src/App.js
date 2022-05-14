@@ -10,10 +10,10 @@ function App() {
     <BrowserRouter>
       <ChakraProvider theme={theme}>
         <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
-      <div className="App">
-        <Views/>
-        <ToggleColourMode></ToggleColourMode>
-      </div>
+          <div className="App">
+            <Views/>
+            <ToggleColourMode></ToggleColourMode>
+          </div>
       </ChakraProvider>
     </BrowserRouter>
   );
