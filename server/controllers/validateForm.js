@@ -11,7 +11,6 @@ const formSchema = Yup.object({
                  .max(30, "Password exceeds the maximum length allowed")
 }); 
 
-
 const validateForm = async (req, res) => {
     const formData = req.body; 
     try {

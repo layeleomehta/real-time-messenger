@@ -3,6 +3,7 @@ const { Server, Socket } = require("socket.io");
 const helmet = require("helmet"); 
 const PORT = 4000; 
 const authRouter = require("./routers/authRouter"); 
+const db = require("./database/db"); 
 
 const app = express(); 
 const server = require("http").createServer(app); 
@@ -20,6 +21,7 @@ app.use(express.json());
 
 // routes
 app.use("/auth", authRouter); 
+
 
 io.on("connect", (socket) => {
 
