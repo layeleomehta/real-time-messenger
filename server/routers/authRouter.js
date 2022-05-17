@@ -6,9 +6,47 @@ const bcrypt = require("bcrypt");
 
 
 // handle login request
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
     validateForm(req, res); 
-})
+    
+    try {
+        const existingUsersQuery = await db.query("SELECT * FROM users WHERE username=$1", [req.body.username]); 
+
+        // check if req body username already exists, if it does then proceed with authentication
+        if(existingUsersQuery.rowCount === 0){
+            res.json({
+                loggedIn: false, 
+                status: "There is no user yet with this username!"
+            })
+            return; 
+        } 
+        
+        // compare req body password with password in database, if matches then user is authenticated
+        const isValid = await bcrypt.compare(req.body.password, existingUsersQuery.rows[0].password_hash); 
+        if(!isValid){
+            res.json({
+                loggedIn: false, 
+                status: "Username or password is incorrect!"
+            }); 
+            return; 
+        }
+
+        // set session cookie 
+        req.session.user = {
+            username: req.body.username, 
+            id: existingUsersQuery.rows[0].id
+        }        
+
+        // send back json object with loggedIn state and username
+        res.json({
+            loggedIn: true, 
+            username: req.body.username
+        }); 
+
+    } catch (err) {
+        console.error(err.message); 
+    }
+}); 
 
 // handle signup request
 router.post("/signup", async (req, res) => {
@@ -34,8 +72,7 @@ router.post("/signup", async (req, res) => {
             hashed_password
         ]); 
 
-        // save a session on server
-
+        // set session cookie
         req.session.user = {
             username: req.body.username, 
             id: savePasswordQuery.rows[0].id
