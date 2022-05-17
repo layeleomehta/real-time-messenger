@@ -14,6 +14,8 @@ import {
   import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+    const navigate = useNavigate(); 
+
     const formik = useFormik({
         initialValues: {
             username: "", 
@@ -47,10 +49,9 @@ const Login = () => {
 
               const existingUserData = await existingUser.json(); 
               console.log(existingUserData); 
+              navigate("/home"); 
             }
     }); 
-
-    const navigate = useNavigate(); 
 
   return (
     <VStack as="form"
