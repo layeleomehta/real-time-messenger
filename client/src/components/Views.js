@@ -1,7 +1,7 @@
 import React from 'react'; 
 import {Route, Routes} from 'react-router-dom'; 
-import Login from './Auth/Login';
-import Signup from './Auth/Signup';
+import Login from './auth/Login';
+import Signup from './auth/Signup';
 import PrivateRoutes from './PrivateRoutes';
 
 const Views = () => {

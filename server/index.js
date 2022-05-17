@@ -1,5 +1,5 @@
 const express = require("express"); 
-const { Server, Socket } = require("socket.io"); 
+const { Server } = require("socket.io"); 
 const helmet = require("helmet"); 
 const PORT = 4000; 
 const authRouter = require("./routers/authRouter"); 

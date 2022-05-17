@@ -3,10 +3,12 @@ import theme from "./theme";
 import ToggleColourMode from "./components/ToggleColourMode";
 import {BrowserRouter} from "react-router-dom"; 
 import Views from "./components/Views";
+import { AccountContextProvider } from "./components/context/AccountContext";
 
 
 function App() {
   return (
+    <AccountContextProvider>
     <BrowserRouter>
       <ChakraProvider theme={theme}>
         <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
@@ -16,6 +18,7 @@ function App() {
           </div>
       </ChakraProvider>
     </BrowserRouter>
+    </AccountContextProvider>
   );
 }
 

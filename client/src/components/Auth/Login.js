@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React, { useContext, useState } from 'react'; 
 import {
     FormControl,
     FormLabel,
@@ -7,14 +7,19 @@ import {
     Button, 
     ButtonGroup, 
     Heading, 
-    Input
+    Input, 
+    Text
   } from '@chakra-ui/react'; 
   import {useFormik} from "formik"; 
   import * as Yup from "yup"; 
   import { useNavigate } from 'react-router-dom';
+import { AccountContext } from '../context/AccountContext';
 
 const Login = () => {
     const navigate = useNavigate(); 
+
+    const {setUser} = useContext(AccountContext); 
+    const [error, setError] = useState(null); 
 
     const formik = useFormik({
         initialValues: {
@@ -47,9 +52,20 @@ const Login = () => {
                 body: JSON.stringify(formData)
               }); 
 
-              const existingUserData = await existingUser.json(); 
-              console.log(existingUserData); 
-              navigate("/home"); 
+
+              const existingUserData = await existingUser.json();
+              if(!existingUserData) return; 
+
+              if(existingUserData.status){
+                  // set this as the error message from context
+                  setError(existingUserData.status)
+              } else if(existingUserData.loggedIn){
+                  // set this as user object from context
+                  setUser({...existingUserData}); 
+                  navigate("/home"); 
+              }
+
+
             }
     }); 
 
@@ -64,6 +80,10 @@ const Login = () => {
     >  
 
     <Heading>Log in!</Heading>
+
+    <Text as="p" color="red.500">
+          {error}
+    </Text>
 
     <FormControl isInvalid={formik.errors.username && formik.touched.username}>
         <FormLabel fontSize="lg">Username</FormLabel>

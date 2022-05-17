@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React, { useContext } from 'react'; 
 import {
     FormControl,
     FormLabel,
@@ -14,8 +14,13 @@ import {
   import * as Yup from "yup"; 
   import { useNavigate } from 'react-router-dom';
 import { ArrowBackIcon } from '@chakra-ui/icons';
+import { AccountContext } from '../context/AccountContext';
 
 const Signup = () => {
+    const navigate = useNavigate(); 
+
+    const {setUser} = useContext(AccountContext); 
+
     const formik = useFormik({
             initialValues: {
                 username: "", 
@@ -48,11 +53,19 @@ const Signup = () => {
               }); 
 
               const newUserData = await newUser.json(); 
-              console.log(newUserData); 
+
+              if(newUserData.status){
+                  // set this as the error message from context
+                  console.log(newUserData.status); 
+              } else if(newUserData.loggedIn){
+                  // set this as user object from context
+                  setUser({...newUserData}); 
+                  navigate("/home"); 
+              }
             }
     }); 
 
-    const navigate = useNavigate(); 
+
 
   return (
     <VStack as="form"
