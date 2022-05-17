@@ -4,6 +4,7 @@ const helmet = require("helmet");
 const PORT = 4000; 
 const authRouter = require("./routers/authRouter"); 
 const session = require("express-session"); 
+const cors = require("cors"); 
 require("dotenv").config(); 
 
 const app = express(); 
@@ -18,6 +19,10 @@ const io = new Server(server, {
 
 // middlewares
 app.use(helmet()); 
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true
+})); 
 app.use(express.json()); 
 app.use(session({
     secret: process.env.COOKIE_SECRET, 

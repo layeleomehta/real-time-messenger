@@ -32,9 +32,23 @@ const Signup = () => {
                              .max(30, "Password exceeds the maximum length allowed")
     
             }),
-            onSubmit: (values, actions) => {
-                console.log(JSON.stringify(values));
-                actions.resetForm();  
+            onSubmit: async (values, actions) => {
+              // obtain user input data (this is formData)
+              const formData = {...values}; 
+              actions.resetForm();  
+
+              // create a post request to the backend to create the new user
+              const newUser = await fetch("http://localhost:4000/auth/signup", {
+                method: "POST", 
+                credentials: "include", 
+                headers: {
+                  "Content-Type": "application/json"
+                }, 
+                body: JSON.stringify(formData)
+              }); 
+
+              const newUserData = await newUser.json(); 
+              console.log(newUserData); 
             }
     }); 
 
@@ -76,7 +90,7 @@ const Signup = () => {
         size="lg"
         value={formik.values.password}
         onChange={formik.handleChange}
-        type="password "
+        type="password"
     />
     <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
     </FormControl>

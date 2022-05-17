@@ -30,10 +30,24 @@ const Login = () => {
                          .max(30, "Password exceeds the maximum length allowed")
 
         }),
-        onSubmit: (values, actions) => {
-            console.log(JSON.stringify(values));
-            actions.resetForm();  
-        }
+        onSubmit: async (values, actions) => {
+              // obtain user input data (this is formData)
+              const formData = {...values}; 
+              actions.resetForm();  
+
+              // create a post request to the backend to the login route
+              const existingUser = await fetch("http://localhost:4000/auth/login", {
+                method: "POST", 
+                credentials: "include", 
+                headers: {
+                  "Content-Type": "application/json"
+                }, 
+                body: JSON.stringify(formData)
+              }); 
+
+              const existingUserData = await existingUser.json(); 
+              console.log(existingUserData); 
+            }
     }); 
 
     const navigate = useNavigate(); 
@@ -73,7 +87,7 @@ const Login = () => {
             size="lg"
             value={formik.values.password}
             onChange={formik.handleChange}
-            type="password  "
+            type="password"
         />
         <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
     </FormControl>
