@@ -5,7 +5,7 @@ import {AccountContext} from "./context/AccountContext";
 const useAuth = () => {
     // gets loggedIn state of user object and returns it
     const {user} = useContext(AccountContext); 
-    // console.log("This is the user object from context", user); 
+    console.log(user); 
     return user && user.loggedIn; 
 }
 
