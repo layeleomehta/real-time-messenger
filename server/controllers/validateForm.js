@@ -17,11 +17,12 @@ const validateForm = async (req, res) => {
         const result = await formSchema.validate(formData); 
         if(result){
             console.log("Form is good")
-        };   
-        res.json("hello"); 
+        } else{
+            console.log("form is not good!"); 
+        }
     } catch (err) {
         console.error(err.message); 
-        res.status(422).json("Error"); 
+        res.status(422).json("Form validation error"); 
     }
 }
 
