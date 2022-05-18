@@ -5,13 +5,12 @@ const PORT = 4000;
 const authRouter = require("./routers/authRouter"); 
 const session = require("express-session"); 
 const cors = require("cors"); 
-const Redis = require("ioredis"); 
 const RedisStore = require("connect-redis")(session); 
 require("dotenv").config(); 
 
 const app = express(); 
 const server = require("http").createServer(app); 
-const redisClient = new Redis(); 
+const redisClient = require("./redis"); 
 
 const io = new Server(server, {
     cors: {

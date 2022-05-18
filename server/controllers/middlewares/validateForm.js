@@ -11,14 +11,16 @@ const formSchema = Yup.object({
                  .max(30, "Password exceeds the maximum length allowed")
 }); 
 
-const validateForm = async (req, res) => {
+const validateForm = async (req, res, next) => {
     const formData = req.body; 
     try {
         const result = await formSchema.validate(formData); 
         if(result){
             console.log("Form is good")
+            next(); 
         } else{
             console.log("form is not good!"); 
+            res.status(422).json("Form validation error"); 
         }
     } catch (err) {
         console.error(err.message); 
