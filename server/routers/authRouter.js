@@ -48,7 +48,7 @@ router.route("/login")
                 return; 
             }
 
-            // set session cookie 
+            // set session  
             req.session.user = {
                 username: req.body.username, 
                 id: existingUsersQuery.rows[0].id
@@ -89,7 +89,7 @@ router.post("/signup", async (req, res) => {
             hashed_password
         ]); 
 
-        // set session cookie
+        // set session 
         req.session.user = {
             username: req.body.username, 
             id: savePasswordQuery.rows[0].id
