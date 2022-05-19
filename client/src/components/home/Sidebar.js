@@ -1,5 +1,6 @@
 import { Button } from "@chakra-ui/button";
 import { ChatIcon } from "@chakra-ui/icons";
+import { useDisclosure } from "@chakra-ui/hooks";
 import {
   Circle,
   Divider,
@@ -11,14 +12,17 @@ import {
 import { Tab, TabList } from "@chakra-ui/tabs";
 import { useContext } from "react";
 import { FriendContext } from "./Home";
+import AddFriendModal from "./AddFriendModal";
 
 const Sidebar = () => {
   const { friendList, setFriendList } = useContext(FriendContext);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
+      <>
     <VStack py="1.4rem">
       <HStack justify="space-evenly" w="100%">
         <Heading size="md">Add Friend</Heading>
-        <Button>
+        <Button onClick={onOpen}>
           <ChatIcon />
         </Button>
       </HStack>
@@ -36,6 +40,8 @@ const Sidebar = () => {
         ))}
       </VStack>
     </VStack>
+    <AddFriendModal isOpen={isOpen} onClose={onClose} />
+    </>
   );
 };
 
