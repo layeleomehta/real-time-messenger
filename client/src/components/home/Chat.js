@@ -21,7 +21,9 @@ const Chat = () => {
       fontSize="lg"
     >
       <TabPanels>
+        <TabPanel>
         <Text>No friend :( Click add friend to start chatting</Text>
+        </TabPanel>
       </TabPanels>
     </VStack>
   );
