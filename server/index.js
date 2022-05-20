@@ -6,6 +6,7 @@ const authRouter = require("./routers/authRouter");
 const cors = require("cors"); 
 require("dotenv").config(); 
 const {sessionMiddleware, wrapper, corsConfig} = require("./controllers/serverControllers"); 
+const {authorizeUser} = require("./controllers/socketControllers")
 
 const app = express(); 
 const server = require("http").createServer(app); 
@@ -25,8 +26,9 @@ app.use(sessionMiddleware);
 app.use("/auth", authRouter); 
 
 io.use(wrapper(sessionMiddleware)); 
+io.use(authorizeUser); 
 io.on("connect", (socket) => {
-    console.log(socket.request.session); 
+    console.log(socket.id); 
 }); 
 
 server.listen(PORT, () => {

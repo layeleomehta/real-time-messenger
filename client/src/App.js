@@ -4,8 +4,6 @@ import ToggleColourMode from "./components/ToggleColourMode";
 import Views from "./components/Views";
 import { AccountContextProvider } from "./components/context/AccountContext";
 
-
-
 function App() {
   return (
     <AccountContextProvider>

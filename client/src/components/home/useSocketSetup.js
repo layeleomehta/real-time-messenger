@@ -12,6 +12,7 @@ const useSocketSetup = () => {
         })
     
       return () => {
+          // we have to remove event listeners from the listeners array (smth that EventEmitter class does)
           socket.off("connect_error"); 
       }
     }, [setUser])
