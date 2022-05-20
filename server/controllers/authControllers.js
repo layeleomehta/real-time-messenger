@@ -1,6 +1,6 @@
 const db = require("../database/db"); 
 const bcrypt = require("bcrypt"); 
-
+const {v4: uuidv4} = require("uuid"); 
 
 module.exports.checkSessionExists = (req, res) => {
     // if user key exists in session, and there is a user in there, this means user is already authenticated, don't need
@@ -27,7 +27,7 @@ module.exports.attemptLogin = async (req, res) => {
         if(existingUsersQuery.rowCount === 0){
             res.json({
                 loggedIn: false, 
-                status: "There is no user yet with this username!"
+                status: "There is no user yet with this username!", 
             })
             return; 
         } 
@@ -45,7 +45,8 @@ module.exports.attemptLogin = async (req, res) => {
         // set session  
         req.session.user = {
             username: req.body.username, 
-            id: existingUsersQuery.rows[0].id
+            id: existingUsersQuery.rows[0].id, 
+            userid: existingUsersQuery.rows[0].userid
         }        
 
         // send back json object with loggedIn state and username
@@ -75,15 +76,17 @@ module.exports.attemptSignup = async (req, res) => {
 
         // if unique username, hash password and save in db
         const hashed_password = await bcrypt.hash(req.body.password, 10); 
-        const savePasswordQuery = await db.query("INSERT INTO users(username, password_hash) VALUES($1, $2) RETURNING *", [
+        const savePasswordQuery = await db.query("INSERT INTO users(username, password_hash, userid) VALUES($1, $2, $3) RETURNING *", [
             req.body.username, 
-            hashed_password
+            hashed_password, 
+            uuidv4()
         ]); 
 
         // set session 
         req.session.user = {
             username: req.body.username, 
-            id: savePasswordQuery.rows[0].id
+            id: savePasswordQuery.rows[0].id, 
+            userid: savePasswordQuery.rows[0].userid
         }
 
         // send back json object with username and logged in state
