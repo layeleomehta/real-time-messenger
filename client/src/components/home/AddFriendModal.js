@@ -36,9 +36,9 @@ import { FriendContext } from "./Home";
         }),
         onSubmit: (values, actions) => {
             console.log(values); 
-            socket.emit("add_friend", values.friendName, ({done, errorMsg}) => {
+            socket.emit("add_friend", values.friendName, ({done, errorMsg, newFriend}) => {
               if(done){
-                setFriendList(prev => [...prev, values.friendName]); 
+                setFriendList(c => [newFriend, ...c]);
                 closeModal()
                 return; 
               } else {

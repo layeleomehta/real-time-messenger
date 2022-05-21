@@ -24,10 +24,16 @@ module.exports.initializeUser = async (socket) => {
     const friendList = await redisClient.lrange(`friends:${socket.user.username}`, 0, -1); 
     console.log(`friends for username:${socket.user.username} are: ${friendList}`); 
 
+    const parsedList = await parseFriendList(friendList); 
+    // list of all rooms, and each room is a userid
+    const friendRooms = parsedList.map(friend => friend.userid); 
     // send 'connected' event to each 'room' channel so they know we are logged in
-
+    if(friendRooms.length > 0 ){
+        socket.to(friendRooms).emit("connected", true, socket.user.username); 
+    }
+    
     // emit 'friends' event so frontend can know who all user's friends are for rendering sidebar
-    socket.emit("friends", friendList); 
+    socket.emit("friends", parsedList); 
 }
 
 // adding a friend when user clicks submit on add friend modal
@@ -43,8 +49,8 @@ module.exports.addFriend = async (socket, friendName, cb) => {
     const friend = await redisClient.hgetall(`username:${friendName}`); 
     console.log(`Friend:${friendName}, with userid: ${friend.userid}`); 
 
-    // if userid is null, that means it doesn't exist in redis, which means user doesn't exist
-    if(!friend.userid){
+    // if friend is null that means it doesn't exist in redis, which means user doesn't exist
+    if(!friend){
         console.log("That user doesn't exist"); 
         cb({done: false, errorMsg: "That user doesn't exist!"}); 
         return; 
@@ -61,16 +67,34 @@ module.exports.addFriend = async (socket, friendName, cb) => {
 
     // push the new friend into ur friend list
     await redisClient.lpush(`friends:${socket.user.username}`, [friendName, friend.userid].join("."));
+
+    const newFriend = {
+        username: friendName, 
+        userid: friend.userid, 
+        connected: friend.connected
+    }
  
-    cb({done: true}); 
+    cb({done: true, newFriend}); 
 }
 
 
 // disconnect user 
-module.exports.onDisconnect = (socket) => {
+module.exports.onDisconnect = async (socket) => {
+    // console.log("inside onDisconnect function"); 
     // set connection status to false in Redis
+    await redisClient.hset(`username:${socket.user.username}`, "connected", false); 
 
     // emit disconnect event to all room channels who u can communicate with (these are all userids in friendList)
+    const friendList = await redisClient.lrange(`friends:${socket.user.username}`, 0, -1); 
+
+    const parsedList = await parseFriendList(friendList); 
+    // list of all rooms, and each room is a userid
+    const friendRooms = parsedList.map(friend => friend.userid); 
+    // send 'connected' event to each 'room' channel so they know we are logged in
+    if(friendRooms.length > 0 ){
+        socket.to(friendRooms).emit("connected", false, socket.user.username); 
+    }
+
 }
 
 // return array of all friends, each item in array is object with friend username, userid and connection status. 

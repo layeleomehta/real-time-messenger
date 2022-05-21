@@ -6,7 +6,7 @@ const authRouter = require("./routers/authRouter");
 const cors = require("cors"); 
 require("dotenv").config(); 
 const {sessionMiddleware, wrapper, corsConfig} = require("./controllers/serverControllers"); 
-const {authorizeUser, addFriend, initializeUser} = require("./controllers/socketControllers")
+const {authorizeUser, addFriend, initializeUser, onDisconnect} = require("./controllers/socketControllers")
 
 const app = express(); 
 const server = require("http").createServer(app); 
@@ -33,6 +33,8 @@ io.on("connect", (socket) => {
     socket.on("add_friend", (friendName, cb) => {
         addFriend(socket, friendName, cb); 
     }); 
+
+    socket.on("disconnecting", () => onDisconnect(socket)); 
 }); 
 
 server.listen(PORT, () => {
