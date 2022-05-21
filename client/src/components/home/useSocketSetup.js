@@ -1,12 +1,15 @@
-import React, { useEffect, useContext } from 'react'; 
+import { useEffect, useContext } from 'react'; 
 import socket from '../../socket';
 import {AccountContext} from "../context/AccountContext"; 
 
-const useSocketSetup = () => {
+const useSocketSetup = (setFriendList) => {
     const { setUser } = useContext(AccountContext); 
 
     useEffect(() => {
         socket.connect(); 
+        socket.on("friends", (friendList) => {
+            setFriendList(friendList); 
+        })
         socket.on("connect_error", () => {
             setUser({loggedIn: false}); 
         })

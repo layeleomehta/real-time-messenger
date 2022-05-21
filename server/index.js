@@ -6,7 +6,7 @@ const authRouter = require("./routers/authRouter");
 const cors = require("cors"); 
 require("dotenv").config(); 
 const {sessionMiddleware, wrapper, corsConfig} = require("./controllers/serverControllers"); 
-const {authorizeUser} = require("./controllers/socketControllers")
+const {authorizeUser, addFriend, initializeUser} = require("./controllers/socketControllers")
 
 const app = express(); 
 const server = require("http").createServer(app); 
@@ -28,7 +28,11 @@ app.use("/auth", authRouter);
 io.use(wrapper(sessionMiddleware)); 
 io.use(authorizeUser); 
 io.on("connect", (socket) => {
+    initializeUser(socket); 
     console.log(socket.user.username); 
+    socket.on("add_friend", (friendName, cb) => {
+        addFriend(socket, friendName, cb); 
+    }); 
 }); 
 
 server.listen(PORT, () => {

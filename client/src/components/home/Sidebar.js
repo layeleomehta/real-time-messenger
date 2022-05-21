@@ -14,6 +14,7 @@ import { useContext } from "react";
 import { FriendContext } from "./Home";
 import AddFriendModal from "./AddFriendModal";
 
+
 const Sidebar = () => {
   const { friendList, setFriendList } = useContext(FriendContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -35,7 +36,7 @@ const Sidebar = () => {
               w="20px"
               h="20px"
             />
-            <Text>{friend.username}</Text>
+            <Text>{friend}</Text>
           </HStack>
         ))}
       </VStack>
