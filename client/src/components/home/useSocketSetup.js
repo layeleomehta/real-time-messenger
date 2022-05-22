@@ -2,7 +2,7 @@ import { useEffect, useContext } from 'react';
 import socket from '../../socket';
 import {AccountContext} from "../context/AccountContext"; 
 
-const useSocketSetup = (setFriendList) => {
+const useSocketSetup = (setFriendList, setMessages) => {
     const { setUser } = useContext(AccountContext); 
 
     useEffect(() => {
@@ -10,6 +10,14 @@ const useSocketSetup = (setFriendList) => {
         socket.on("friends", (friendList) => {
             setFriendList(friendList); 
         }); 
+
+        socket.on("messages", (messages) => {
+            setMessages(messages);  
+        }); 
+
+        socket.on("dm", message => {
+          setMessages(prevMsgs => [message, ...prevMsgs]);
+        });
 
         socket.on("connected", (status, username) => {
             setFriendList(prevFriends => {
@@ -30,8 +38,12 @@ const useSocketSetup = (setFriendList) => {
       return () => {
           // we have to remove event listeners from the listeners array (smth that EventEmitter class does)
           socket.off("connect_error"); 
+          socket.off("connected"); 
+          socket.off("friends"); 
+          socket.off("messages"); 
+          socket.off("dm"); 
       }
-    }, [setUser])
+    }, [setUser, setFriendList, setMessages])
     
 
 }

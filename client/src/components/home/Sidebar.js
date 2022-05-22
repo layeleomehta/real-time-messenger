@@ -16,7 +16,7 @@ import AddFriendModal from "./AddFriendModal";
 
 
 const Sidebar = () => {
-  const { friendList, setFriendList } = useContext(FriendContext);
+  const { friendList } = useContext(FriendContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
       <>

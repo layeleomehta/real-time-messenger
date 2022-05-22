@@ -34,6 +34,23 @@ module.exports.initializeUser = async (socket) => {
     
     // emit 'friends' event so frontend can know who all user's friends are for rendering sidebar
     socket.emit("friends", parsedList); 
+
+    // do smth similar for messages upon initialization
+    const msgQuery = await redisClient.lrange(
+        `chat:${socket.user.userid}`,
+        0,
+        -1
+      );
+    
+      // to.from.content
+      const messages = msgQuery.map(msgStr => {
+        const parsedStr = msgStr.split(".");
+        return { to: parsedStr[0], from: parsedStr[1], content: parsedStr[2] };
+      });
+    
+      if (messages && messages.length > 0) {
+        socket.emit("messages", messages);
+      }
 }
 
 // adding a friend when user clicks submit on add friend modal
@@ -94,7 +111,19 @@ module.exports.onDisconnect = async (socket) => {
     if(friendRooms.length > 0 ){
         socket.to(friendRooms).emit("connected", false, socket.user.username); 
     }
+}
 
+module.exports.dm = async (socket, message) => {
+    message.from = socket.user.userid;
+    // to.from.content
+    const messageString = [message.to, message.from, message.content].join(
+      "."
+    );
+  
+    await redisClient.lpush(`chat:${message.to}`, messageString);
+    await redisClient.lpush(`chat:${message.from}`, messageString);
+  
+    socket.to(message.to).emit("dm", message);
 }
 
 // return array of all friends, each item in array is object with friend username, userid and connection status. 
